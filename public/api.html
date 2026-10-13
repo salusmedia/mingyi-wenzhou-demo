@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>名医温州 · 接口服务</title><link rel="stylesheet" href="pc.css?v=1">
+<style>
+.wrap{max-width:1180px;margin:0 auto;padding:24px}
+.hdr{background:linear-gradient(150deg,#0b4f53,#0b7a75 60%,#3fbfa8);color:#fff;padding:30px 24px}
+.hdr h1{font-size:24px}.hdr p{opacity:.85;margin-top:6px;font-size:13px}
+.api{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.mth{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:4px;background:#2c8a4b;color:#fff;margin-right:6px}
+.mth.get{background:#2f6fde}
+.url{font-family:ui-monospace,Menlo,monospace;font-size:13px}
+textarea.code{width:100%;min-height:150px;border:0;outline:0;resize:vertical;background:#0f2e33;color:#cde7e4}
+h4{font-size:13px;margin:12px 0 6px;color:#3f6d69}
+table.t td,table.t th{padding:6px 8px;font-size:12px}
+@media(max-width:860px){.api{grid-template-columns:1fr}}
+</style></head><body>
+<div class="hdr"><div class="wrap" style="padding:0 24px"><h1>名医温州 · 第三方调用接口</h1><p>号源类别字典（4 类 / 8 交易）· 医生介绍信息 02_01_01_08（新增名医类别字段）· 停诊通知 RADTS_YYGH_TZ_TINGZHEN · 【名医医生介绍】查询<br>鉴权：请求头 <code>X-App-Key</code>，演示值 <code id="ak">…</code>；所有调用均记入管理后台“三方接口联调”日志。</p></div></div>
+<div class="wrap" id="root"></div>
+<script>
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+(async () => {
+  const meta = (await (await fetch('/open/meta')).json()).data;
+  document.getElementById('ak').textContent = meta.appKey;
+  const h = meta.hospitals[0], d = h.doctors[1] || h.doctors[0];
+  const dt = new Date(Date.now() + 864e5 * 3); const date = dt.toISOString().slice(0, 10);
+  const APIS = [
+    { id: 'dict', m: 'GET', url: '/open/dict/hy-category', title: '号源类别字典查询（新增 4 个号源类别，涉及 8 个交易）', dir: '统一号源池平台 ⇄ 第三方',
+      req: [], res: [['HYLBDM', '号源类别代码', 'MYH01~MYH04'], ['HYLBMC', '号源类别名称', '名医专家号 / 名中医专家号 / 名医特需号 / 名医团队联合门诊号'], ['JYDM', '涉及交易代码', '8 个交易'], ['BZ', '调整说明', '']], body: null },
+    { id: 'jj', m: 'POST', url: '/open/02_01_01_08', title: '医生介绍信息 <02_01_01_08>（新增名医类别字段）', dir: '医院 → 统一号源池平台',
+      req: [['YLJGDM', '医疗机构代码', '选填'], ['KSDM', '科室代码', '选填'], ['YSDM', '医生代码', '选填']],
+      res: [['YLJGDM/YLJGMC', '医疗机构', ''], ['KSDM/KSMC', '科室', ''], ['YSDM/YSXM', '医生', ''], ['ZC', '职称', ''], ['SC/JJ', '擅长/简介', ''], ['<b>MYLB</b>', '<b>名医类别（新增）</b>', '1 国家级名医 2 省级名医 3 市级名医 4 名中医'], ['HYLB', '号源类别', 'MYH01~04']],
+      body: { YLJGDM: h.code, YSDM: d.code } },
+    { id: 'tz', m: 'POST', url: '/open/RADTS_YYGH_TZ_TINGZHEN', title: '预约挂号数据同步 - 停诊通知 <RADTS_YYGH_TZ_TINGZHEN>（新增）', dir: '第三方（医院HIS）→ 统一号源池平台',
+      req: [['YLJGDM', '医疗机构代码', '必填'], ['YSDM', '医生代码', '必填'], ['TZRQ', '停诊日期', 'yyyy-MM-dd'], ['SJD', '时间段', '0 全天 1 上午 2 下午'], ['TZYY', '停诊原因', '']],
+      res: [['TZLSH', '停诊流水号', ''], ['YXYYS', '影响预约数', '已自动退号'], ['TZFS', '通知方式', '健康温州消息 + 短信']],
+      body: meta.example ? { YLJGDM: meta.example.YLJGDM, YSDM: meta.example.YSDM, TZRQ: meta.example.TZRQ, SJD: meta.example.SJD, TZYY: '名医临时公务安排' } : { YLJGDM: h.code, YSDM: d.code, TZRQ: date, SJD: '0', TZYY: '名医临时公务安排' }, note: '处理逻辑：号源置停诊 → 已约患者自动退号 → 健康温州消息机制通知 + 短信 → 关注该医生的居民收到排班变动。若该日无排班会返回 1002。示例参数取自真实排班（' + (meta.example ? meta.example.name + ' ' + meta.example.TZRQ : '') + '），发送后可在居民端/机构端查看停诊效果。' },
+    { id: 'my', m: 'POST', url: '/open/mingyi-doctor-intro', title: '预约转诊-门诊预约挂号：【名医医生介绍】查询（新增）', dir: '统一号源池平台 → 第三方',
+      req: [['YLJGDM', '医疗机构代码', '不传时返回所有'], ['KSDM', '科室代码', '不传时返回所有']],
+      res: [['YLJGDM/YLJGMC', '机构', ''], ['KSDM/KSMC', '科室', ''], ['YSDM/YSXM', '医生', ''], ['MYLB/MYLBMC', '名医类别', ''], ['YWPB', '有无排班', '1 有 0 无（未来 14 天）'], ['SYHY', '剩余号源', '扩展'], ['ZZSJ', '坐诊时间', '扩展']],
+      body: { YLJGDM: h.code } },
+  ];
+  document.getElementById('root').innerHTML = APIS.map(a => `<div class="card"><div class="card-t"><span><span class="mth ${a.m === 'GET' ? 'get' : ''}">${a.m}</span><span class="url">${a.url}</span></span><small>${a.dir}</small></div>
+    <div style="font-weight:600;margin-bottom:6px">${a.title}</div>${a.note ? `<div class="muted">${a.note}</div>` : ''}
+    <div class="api"><div>${a.req.length ? `<h4>入参</h4><table class="t"><tr><th>字段</th><th>说明</th><th>备注</th></tr>${a.req.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="muted">${r[2]}</td></tr>`).join('')}</table>` : '<h4>入参</h4><div class="muted">无</div>'}
+      <h4>出参</h4><table class="t"><tr><th>字段</th><th>说明</th><th>备注</th></tr>${a.res.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="muted">${r[2]}</td></tr>`).join('')}</table></div>
+    <div><h4>在线调试 ${a.body ? '（请求体 JSON，可修改）' : ''}</h4>${a.body ? `<textarea class="code" id="b-${a.id}">${esc(JSON.stringify(a.body, null, 2))}</textarea>` : ''}
+      <button class="btn" style="margin:8px 0" data-run="${a.id}">发送请求</button><div class="code" id="r-${a.id}" style="min-height:80px">（响应将显示在这里）</div></div></div></div>`).join('')
+    + `<div class="card"><div class="card-t">测试数据参考<small>机构 / 科室 / 医生代码</small></div><div class="tw" style="max-height:300px;overflow:auto"><table class="t"><tr><th>机构代码</th><th>机构</th><th>科室代码</th><th>医生代码</th></tr>${meta.hospitals.map(h => `<tr><td>${h.code}</td><td>${esc(h.name)}</td><td class="muted">${h.depts.map(d => d.code + ' ' + d.name).join('；')}</td><td class="muted">${h.doctors.map(d => d.code + ' ' + d.name).join('；')}</td></tr>`).join('')}</table></div></div>`;
+  document.querySelectorAll('[data-run]').forEach(b => b.onclick = async () => {
+    const a = APIS.find(x => x.id === b.dataset.run); const out = document.getElementById('r-' + a.id);
+    let body; if (a.body) { try { body = JSON.parse(document.getElementById('b-' + a.id).value); } catch { out.textContent = '请求体不是合法 JSON'; return; } }
+    out.textContent = '请求中…'; const t0 = performance.now();
+    const r = await fetch(a.url, { method: a.m, headers: { 'Content-Type': 'application/json', 'X-App-Key': meta.appKey }, body: body ? JSON.stringify(body) : undefined });
+    const j = await r.json();
+    if (j.data && Array.isArray(j.data) && j.data.length > 5) { j._显示 = `仅显示前 5 条，共 ${j.data.length} 条`; j.data = j.data.slice(0, 5); }
+    out.textContent = `HTTP ${r.status} · ${Math.round(performance.now() - t0)}ms\n` + JSON.stringify(j, null, 2);
+  });
+})();
+</script></body></html>

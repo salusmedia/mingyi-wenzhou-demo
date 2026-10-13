@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>温州名医汇 · 名医温州 DEMO</title>
+<style>
+:root{--c:#0b7a75;--txt:#1f2a2e;--sub:#66737a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:14px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--txt);background:radial-gradient(1200px 600px at 80% -10%,#d8f0ec,transparent),#eef3f4;min-height:100vh}
+button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1240px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:400px 1fr;gap:40px;align-items:start}
+.phone{width:390px;height:800px;border-radius:52px;background:#111;padding:12px;box-shadow:0 30px 60px rgba(15,46,51,.25),inset 0 0 0 2px #333;position:sticky;top:24px}
+.scr{width:100%;height:100%;border-radius:42px;overflow:hidden;background:#ededed;position:relative;display:flex;flex-direction:column}
+.sb{height:40px;flex:none;display:flex;justify-content:space-between;align-items:flex-end;padding:0 28px 4px;font-size:13px;font-weight:600;background:#ededed}
+.wx-hd{height:44px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16px;position:relative;background:#ededed;border-bottom:1px solid #ddd}
+.wx-hd .l{position:absolute;left:12px;font-size:20px}.wx-hd .r{position:absolute;right:14px;font-size:20px}
+.chat{flex:1;overflow:auto;padding:12px}
+.tm{background:#fff;border-radius:8px;padding:12px 14px;margin:10px 0 14px;font-size:13px}
+.tm b{display:block;font-size:15px;margin-bottom:6px}
+.tm .k{color:#888}
+.tm .more{border-top:1px solid #eee;margin-top:8px;padding-top:8px;color:#576b95;font-size:13px}
+.time{text-align:center;font-size:11px;color:#999}
+.menu{height:50px;flex:none;display:flex;background:#f7f7f7;border-top:1px solid #ddd}
+.menu button{flex:1;font-size:14px;border-left:1px solid #e3e3e3;position:relative}
+.menu button:first-child{border-left:0;color:var(--c);font-weight:600}
+.sub{position:absolute;bottom:56px;left:6px;background:#fff;border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.15);width:120px;overflow:hidden;display:none;z-index:3}
+.sub a{display:block;padding:10px;font-size:13px;border-top:1px solid #eee;text-align:center;color:#333;font-weight:400}
+.sub a:first-child{border:0}
+.mp{flex:1;overflow:auto;background:#f4f6f8}
+.mp-top{background:linear-gradient(160deg,#1a73d9,#3d9bf0);color:#fff;padding:14px 16px 50px}
+.mp-top b{font-size:18px}
+.mp-grid{margin:-36px 12px 0;background:#fff;border-radius:12px;padding:14px 6px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px 0}
+.mp-grid div{display:flex;flex-direction:column;align-items:center;font-size:12px;gap:4px;cursor:pointer;position:relative}
+.mp-grid i{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-style:normal;color:#fff;font-size:18px}
+.mp-grid .hl i{box-shadow:0 0 0 3px #fff,0 0 0 5px #e8833a}
+.mp-grid .hl:after{content:"NEW";position:absolute;top:-6px;right:10px;font-size:9px;background:#e8833a;color:#fff;border-radius:6px;padding:0 4px}
+.mp-card{margin:12px;background:#fff;border-radius:12px;padding:14px;font-size:13px;color:#555}
+.cap{position:absolute;right:12px;top:47px;z-index:5;display:flex;border:1px solid rgba(0,0,0,.12);border-radius:16px;background:rgba(255,255,255,.8);height:30px;align-items:center;font-size:14px;padding:0 2px}
+.cap span{width:38px;text-align:center}
+.cap span+span{border-left:1px solid rgba(0,0,0,.12)}
+iframe{flex:1;border:0;width:100%;background:#fff}
+.hbar{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:130px;height:5px;border-radius:3px;background:#111;z-index:6}
+h1{font-size:30px;letter-spacing:1px}
+h1 span{color:var(--c)}
+.lead{color:var(--sub);margin-top:8px;max-width:720px}
+.switch{display:inline-flex;background:#fff;border-radius:10px;padding:4px;margin-top:18px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.switch button{padding:7px 16px;border-radius:7px;font-size:13px;color:var(--sub)}
+.switch button.on{background:var(--c);color:#fff}
+.ends{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:22px}
+.end{background:#fff;border-radius:14px;padding:18px;border:1px solid #e3eaec;transition:.15s;display:block}
+.end:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(15,46,51,.08);border-color:#b9dcd8}
+.end b{font-size:17px;display:flex;align-items:center;gap:8px}
+.end b i{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:#fff;font-style:normal;font-size:14px}
+.end p{color:var(--sub);font-size:13px;margin-top:6px}
+.end small{display:block;margin-top:8px;font-size:12px;color:var(--c)}
+.map{background:#fff;border-radius:14px;padding:18px;margin-top:22px;border:1px solid #e3eaec}
+.map h3{font-size:16px;margin-bottom:10px}
+.map table{width:100%;border-collapse:collapse;font-size:13px}
+.map td,.map th{padding:7px 8px;border-bottom:1px solid #eef1f2;text-align:left;vertical-align:top}
+.map th{color:var(--sub);font-weight:500;background:#f7f9fa}
+.map td:first-child{color:var(--sub);width:34px}
+.map a{color:var(--c)}
+.foot{color:var(--sub);font-size:12px;margin-top:18px}
+@media(max-width:1000px){.wrap{grid-template-columns:1fr}.phone{position:static;margin:0 auto}}
+@media(max-width:480px){.phone{display:none}.ends{grid-template-columns:1fr}.wrap{padding:20px 16px}}
+</style></head><body>
+<div class="wrap">
+  <div class="phone"><div class="scr" id="scr"></div><div class="hbar"></div></div>
+  <div>
+    <h1>温州名医汇 · <span>名医温州</span></h1>
+    <p class="lead">温州市公立医院高质量发展项目（信息化）· 市级公立医院云HIS系统更新迭代提升项目 · 第一阶段分项。居民经“健康温州”公众号、小程序进入名医温州，实现区域名医资源的查询与预约；医院端统计查询、留言导出；平台后台信息维护与号源池接口服务。</p>
+    <div class="switch"><button data-m="gzh" class="on">健康温州公众号入口</button><button data-m="mp">健康温州小程序入口</button></div>
+    <div class="ends">
+      <a class="end" href="h5.html" target="_blank"><b><i style="background:#0b7a75">居</i>居民端（手机 H5）</b><p>登录注册 · 预约列表 · 医生搜索 · 医生信息 · 分享 · 关注 · 安排医生 · 留言板 · 优化意见 · 预约挂号 · 预约记录 · 消息通知</p><small>演示账号 13800000001 / Demo@123 ↗</small></a>
+      <a class="end" href="org.html" target="_blank"><b><i style="background:#2f6fde">机</i>机构端（电脑 Web）</b><p>注册登录 · 按坐诊医院/坐诊医生/患者姓名统计查询 · 留言内容批量导出 · 名医预约需求处理 · 停诊通知</p><small>h01 / Org@123　wzyy / Org@123 ↗</small></a>
+      <a class="end" href="admin.html" target="_blank"><b><i style="background:#e8833a">管</i>管理后台</b><p>各地名医汇介绍信息维护 · 机构与名医档案 · 号源池维护（号源/停诊/字典）· 优化意见回复 · 账号配置 · 三方接口联调</p><small>admin / Admin@123 ↗</small></a>
+      <a class="end" href="api.html" target="_blank"><b><i style="background:#7b5bd6">接</i>接口服务</b><p>4 个号源类别字典（8 交易）· 02_01_01_08 新增名医类别 · RADTS_YYGH_TZ_TINGZHEN 停诊通知 · 【名医医生介绍】查询，支持在线调试</p><small>接口文档与在线调试 ↗</small></a>
+    </div>
+    <div class="map"><h3>技术参数响应对照（23 项）</h3><table><tr><th>#</th><th>模块 · 功能项</th><th>DEMO 位置</th></tr>
+      <tr><td>1</td><td>服务载体 · 健康温州公众号、小程序</td><td>左侧手机：公众号菜单“名医温州” / 小程序宫格入口</td></tr>
+      <tr><td>2</td><td>居民端 · 登录注册</td><td>手机号/身份证+密码、验证码登录、注册实名、找回密码</td></tr>
+      <tr><td>3</td><td>预约列表</td><td>首页“预约列表”→ 单位页 → 科室名医 → 点头像看介绍与问诊服务</td></tr>
+      <tr><td>4</td><td>医生搜索</td><td>姓名/科室/医院/疾病多关键词 + 名医类别/有号筛选</td></tr>
+      <tr><td>5</td><td>医生信息</td><td>执业资质、擅长、坐诊时间周表、14 天号源</td></tr>
+      <tr><td>6–7</td><td>分享 · 关注</td><td>医生页右上角：海报（二维码）微信好友/保存图片；关注列表含排班动态</td></tr>
+      <tr><td>8–9</td><td>安排医生 · 留言板</td><td>“安排医生”提交预约意向；预约时同步留言</td></tr>
+      <tr><td>10–12</td><td>优化意见 · 预约挂号 · 预约记录</td><td>意见提交与回复；选科室→名医→时段下单；状态/取消/改约/全流程追踪</td></tr>
+      <tr><td>13</td><td>消息通知</td><td>停诊经健康温州消息通知；有留言的预约短信通知医生排班</td></tr>
+      <tr><td>14–15,17</td><td>机构端 · 登录 · 统计查询 · 留言导出</td><td><a href="org.html" target="_blank">机构端</a></td></tr>
+      <tr><td>16</td><td>管理后台 · 信息维护</td><td><a href="admin.html#/region" target="_blank">名医汇介绍</a></td></tr>
+      <tr><td>18–20</td><td>接口服务 · 号源池维护 · 三方接口 · 医院端接口</td><td><a href="admin.html#/pool" target="_blank">号源池维护</a> · <a href="admin.html#/iface" target="_blank">三方联调</a></td></tr>
+      <tr><td>21–22</td><td>系统实施 · 平台/机构实施</td><td>账号配置、环境部署、接口联调日志</td></tr>
+      <tr><td>23</td><td>第三方调用接口</td><td><a href="api.html" target="_blank">接口服务</a></td></tr></table></div>
+    <p class="foot">演示系统 · 所有医生、患者均为虚构的脱敏测试数据，不代表真实医疗机构排班。</p>
+  </div>
+</div>
+<script>
+const scr = document.getElementById('scr');
+const sb = '<div class="sb"><span>9:41</span><span>●●● ▮</span></div>';
+function gzh() {
+  scr.innerHTML = sb + `<div class="wx-hd"><span class="l">‹</span>健康温州<span class="r">👤</span></div>
+  <div class="chat"><div class="time">昨天 10:12</div>
+    <div class="tm"><b>名医预约成功通知</b><span class="k">就诊医院：</span>温医大附一<br><span class="k">就诊科室：</span>心血管内科<br><span class="k">就诊时间：</span>下周一 上午<div class="more">详情 ›</div></div>
+    <div class="time">今天 09:30</div>
+    <div class="tm"><b>名医停诊通知</b><span class="k">因名医外出参加学术会议，您预约的门诊停诊，挂号费原路退回。</span><div class="more">重新预约 ›</div></div>
+    <div class="tm" style="background:#e6f5f3"><b>🔔 “名医温州”上线</b>汇聚全市名医资源，统一号源池，一号直达。点击下方菜单“名医温州”进入。</div></div>
+  <div class="sub" id="sub"><a data-go="#/home">名医预约</a><a data-go="#/search?focus=1">找名医</a><a data-go="#/records">预约记录</a></div>
+  <div class="menu"><button id="m1">≡ 名医温州</button><button>便民服务</button><button>个人中心</button></div>`;
+  const sub = document.getElementById('sub');
+  document.getElementById('m1').onclick = () => sub.style.display = sub.style.display === 'block' ? 'none' : 'block';
+  sub.querySelectorAll('a').forEach(a => a.onclick = () => open('h5.html?from=gzh' + a.dataset.go, '健康温州'));
+}
+function mp() {
+  const items = [['预约挂号', '#2f6fde', '挂'], ['名医温州', '#0b7a75', '名', 1], ['报告查询', '#7b5bd6', '报'], ['健康档案', '#2c8a4b', '档'], ['家庭医生', '#c0663a', '家'], ['医保码', '#1a73d9', '保'], ['疫苗接种', '#b8456b', '苗'], ['更多', '#9aa5ab', '…']];
+  scr.innerHTML = sb + `<div class="cap"><span>···</span><span>◉</span></div><div class="mp"><div class="mp-top"><b>健康温州</b><div style="font-size:12px;opacity:.85">温州市卫生健康委员会</div></div>
+    <div class="mp-grid">${items.map(i => `<div class="${i[3] ? 'hl' : ''}" data-n="${i[0]}"><i style="background:${i[1]}">${i[2]}</i>${i[0]}</div>`).join('')}</div>
+    <div class="mp-card"><b style="color:#1f2a2e">名医温州 · 区域名医一网通约</b><br>汇聚市区、瑞安、乐清、永嘉、苍南等地名医资源。点击上方“名医温州”进入。</div></div>`;
+  scr.querySelectorAll('[data-n]').forEach(d => d.onclick = () => d.dataset.n === '名医温州' ? open('h5.html?from=mp#/home', null) : alert('演示：仅“名医温州”入口可用'));
+}
+function open(src, title) {
+  scr.innerHTML = sb + (title ? `<div class="wx-hd"><span class="l" id="bk" style="cursor:pointer">✕</span>名医温州<span class="r">···</span></div>` : `<div class="cap"><span>···</span><span id="bk" style="cursor:pointer">◉</span></div>`) + `<iframe src="${src}"></iframe>`;
+  document.getElementById('bk').onclick = () => mode === 'gzh' ? gzh() : mp();
+}
+let mode = 'gzh';
+document.querySelectorAll('.switch button').forEach(b => b.onclick = () => { mode = b.dataset.m; document.querySelectorAll('.switch button').forEach(x => x.classList.toggle('on', x === b)); mode === 'gzh' ? gzh() : mp(); });
+gzh();
+</script></body></html>

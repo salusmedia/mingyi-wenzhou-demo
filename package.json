@@ -1,0 +1,9 @@
+{
+  "name": "mingyi-wenzhou-demo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "温州名医汇（名医温州）DEMO 系统",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
